@@ -6,7 +6,7 @@
  * @version 0.9.5 release candidate 1  (5/20/2009)
  */
  
-jQuery.bt = {version: '0.9.5-rc1'};
+jQuery.bt = {version: '0.9.6-rc1'};
  
 /*
  * @type jQuery
@@ -109,8 +109,8 @@ jQuery.bt = {version: '0.9.5-rc1'};
   
       if (opts.killTitle) {
         $(this).find('[title]').andSelf().each(function() {
-          if (!$(this).attr('bt-xTitle')) {
-            $(this).attr('bt-xTitle', $(this).attr('title')).attr('title', '');
+          if (!$(this).prop('bt-xTitle')) {
+            $(this).prop('bt-xTitle', $(this).prop('title')).prop('title', '');
           }
         });
       }    
@@ -202,13 +202,13 @@ jQuery.bt = {version: '0.9.5-rc1'};
           // bizarre, I know
           if (opts.killTitle) {
             // if we've killed the title attribute, it's been stored in 'bt-xTitle' so get it..
-            $(this).attr('title', $(this).attr('bt-xTitle'));
+            $(this).prop('title', $(this).prop('bt-xTitle'));
           }
           // then evaluate the selector... title is now in place
           content = $.isFunction(opts.contentSelector) ? opts.contentSelector.apply(this) : eval(opts.contentSelector);
           if (opts.killTitle) {
             // now remove the title again, so we don't get double tips
-            $(this).attr('title', '');
+            $(this).prop('title', '');
           }
         }
         
@@ -583,7 +583,7 @@ jQuery.bt = {version: '0.9.5-rc1'};
         } // </ switch >
         
         var canvas = document.createElement('canvas');
-        $(canvas).attr('width', (numb($text.btOuterWidth(true)) + opts.strokeWidth*2 + shadowMarginX)).attr('height', (numb($text.outerHeight(true)) + opts.strokeWidth*2 + shadowMarginY)).appendTo($box).css({position: 'absolute', zIndex: opts.boxzIndex});
+        $(canvas).prop('width', (numb($text.btOuterWidth(true)) + opts.strokeWidth*2 + shadowMarginX)).prop('height', (numb($text.outerHeight(true)) + opts.strokeWidth*2 + shadowMarginY)).appendTo($box).css({position: 'absolute', zIndex: opts.boxzIndex});
 
   
         // if excanvas is set up, we need to initialize the new canvas element
@@ -1165,7 +1165,7 @@ jQuery.bt = {version: '0.9.5-rc1'};
                                                  
     activeClass:      'bt-active',           // class added to TARGET element when its BeautyTip is active
   
-    contentSelector:  "$(this).attr('title')", // if there is no content argument, use this selector to retrieve the title
+    contentSelector:  "$(this).prop('title')", // if there is no content argument, use this selector to retrieve the title
                                              // a function which returns the content may also be passed here
   
     ajaxPath:         null,                  // if using ajax request for content, this contains url and (opt) selector
@@ -1180,8 +1180,8 @@ jQuery.bt = {version: '0.9.5-rc1'};
                                              // the result of which will be used as the ajaxPath
                                              // the second (optional) value is the content selector as above
                                              // examples:
-                                             //    ["$(this).attr('href')", 'div#content']
-                                             //    ["$(this).parents('.wrapper').find('.title').attr('href')"]
+                                             //    ["$(this).prop('href')", 'div#content']
+                                             //    ["$(this).parents('.wrapper').find('.title').prop('href')"]
                                              //    ["$('#some-element').val()"]
                                              
     ajaxError:        '<strong>ERROR:</strong> <em>%error</em>',
