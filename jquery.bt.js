@@ -850,9 +850,15 @@ jQuery.bt = {version: '0.9.6-rc1'};
           // WebKit.. let's go!
           return true;
         }
-        else if (/gecko|mozilla/.test(userAgent) && parseFloat(userAgent.match(/firefox\/(\d+(?:\.\d+)+)/)[1]) >= 3.1){
+        if (/gecko|mozilla/.test(userAgent)) {
+          var match = userAgent.match(/firefox\/(\d+(?:\.\d+)+)/);
+          if (match && match.length >= 2 && parseFloat(match[1]) >= 3.1) {
           // Mozilla 3.1 or higher
           return true;
+          }
+        }
+        if (/trident\/5.0/.test(userAgent)) {
+            return true;
         }
       }
       catch(err) {
