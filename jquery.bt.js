@@ -687,7 +687,18 @@ jQuery.bt = {version: '0.9.7'};
         }
 
         drawIt.apply(ctx, [points], opts.strokeWidth);
-        ctx.fillStyle = opts.fill;
+        if(typeof opts.fill=="object"){
+            if(opts.fill.type=='gradient'){
+                var grd = ctx.createLinearGradient(eval(opts.fill.x1),eval(opts.fill.y1),eval(opts.fill.x2),eval(opts.fill.y2));
+                for(var i in opts.fill.colors){
+                    grd.addColorStop(opts.fill.colors[i].start,opts.fill.colors[i].color);
+                }
+                ctx.fillStyle = grd;
+            }
+        }else{
+            ctx.fillStyle = opts.fill;
+        }
+
         if (opts.shadow) {
           ctx.shadowOffsetX = opts.shadowOffsetX;
           ctx.shadowOffsetY = opts.shadowOffsetY;
