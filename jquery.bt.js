@@ -94,7 +94,7 @@ jQuery.bt = {version: '0.9.7'};
     return this.each(function(index) {
 
       var opts = jQuery.extend(false, jQuery.bt.defaults, jQuery.bt.options, options);
-   var target=this;
+      var target=this;
       // clean up the options
       opts.spikeLength = numb(opts.spikeLength);
       opts.spikeGirth = numb(opts.spikeGirth);
@@ -109,8 +109,8 @@ jQuery.bt = {version: '0.9.7'};
 
       if (opts.killTitle) {
         $(this).find('[title]').andSelf().each(function() {
-          if (!$(this).prop('bt-xTitle')) {
-            $(this).prop('bt-xTitle', $(this).prop('title')).prop('title', '');
+          if (!$(this).attr('bt-xTitle')) {
+            $(this).attr('bt-xTitle', $(this).attr('title')).attr('title', '');
           }
         });
       }
@@ -118,46 +118,46 @@ jQuery.bt = {version: '0.9.7'};
       if (typeof opts.trigger == 'string') {
         opts.trigger = [opts.trigger];
       }
-	  if(!(opts.trigger.length > 1)){
-		  if (opts.trigger[0] == 'hoverIntent') {
-			var hoverOpts = jQuery.extend(opts.hoverIntentOpts, {
-			  over: function() {
-				this.btOn();
-			  },
-			  out: function() {
-				this.btOff();
-			  }});
-			$(this).hoverIntent(hoverOpts);
+      if(!(opts.trigger.length > 1)){
+          if (opts.trigger[0] == 'hoverIntent') {
+            var hoverOpts = jQuery.extend(opts.hoverIntentOpts, {
+              over: function() {
+                this.btOn();
+              },
+              out: function() {
+                this.btOff();
+              }});
+            $(this).hoverIntent(hoverOpts);
 
-		  }
-		  else if (opts.trigger[0] == 'hover') {
-			$(this).hover(
-			  function() {
-				this.btOn();
-			  },
-			  function() {
-				this.btOff();
-			  }
-			);
-		  }
-		  else if (opts.trigger[0] == 'now') {
-			// toggle the on/off right now
-			// note that 'none' gives more control (see below)
-			if ($(this).hasClass('bt-active')) {
-			  this.btOff();
-			}
-			else {
-			  this.btOn();
-			}
-		  }
-		  else if (opts.trigger[0] == 'none') {
-			// initialize the tip with no event trigger
-			// use javascript to turn on/off tip as follows:
-			// $('#selector').btOn();
-			// $('#selector').btOff();
-		  }
-	  }
-	  else if (opts.trigger[0] != opts.trigger[1]) {
+          }
+          else if (opts.trigger[0] == 'hover') {
+            $(this).hover(
+              function() {
+                this.btOn();
+              },
+              function() {
+                this.btOff();
+              }
+            );
+          }
+          else if (opts.trigger[0] == 'now') {
+            // toggle the on/off right now
+            // note that 'none' gives more control (see below)
+            if ($(this).hasClass('bt-active')) {
+              this.btOff();
+            }
+            else {
+              this.btOn();
+            }
+          }
+          else if (opts.trigger[0] == 'none') {
+            // initialize the tip with no event trigger
+            // use javascript to turn on/off tip as follows:
+            // $('#selector').btOn();
+            // $('#selector').btOff();
+          }
+      }
+      else if (opts.trigger[0] != opts.trigger[1]) {
         $(this)
           .bind(opts.trigger[0], function() {
             this.btOn();
@@ -204,13 +204,13 @@ jQuery.bt = {version: '0.9.7'};
           // bizarre, I know
           if (opts.killTitle) {
             // if we've killed the title attribute, it's been stored in 'bt-xTitle' so get it..
-            $(this).prop('title', $(this).prop('bt-xTitle'));
+            $(this).attr('title', $(this).attr('bt-xTitle'));
           }
           // then evaluate the selector... title is now in place
           content = $.isFunction(opts.contentSelector) ? opts.contentSelector.apply(this) : eval(opts.contentSelector);
           if (opts.killTitle) {
             // now remove the title again, so we don't get double tips
-            $(this).prop('title', '');
+            $(this).attr('title', '');
           }
         }
 
@@ -336,7 +336,6 @@ jQuery.bt = {version: '0.9.7'};
           var top = numb(pos.top) + numb($(this).css('margin-top')) - shadowShiftY; // IE can return 'auto' for margins
           var left = numb(pos.left) + numb($(this).css('margin-left')) - shadowShiftX;
         }
-
         var width = $(this).btOuterWidth();
         var height = $(this).outerHeight();
 
@@ -415,8 +414,10 @@ jQuery.bt = {version: '0.9.7'};
 
         // horizontal (left) offset for the box
         var horiz = left + width * opts.targetAlign - textOutWidth * opts.align;
+        var horizCenter=(left + width * 0.5 - textOutWidth * 0.5);
         // vertical (top) offset for the box
         var vert = top + height * opts.targetAlign - textOutHeight * opts.align;
+        var vertCenter=(top + height * 0.5 - textOutHeight * 0.5);
         var points = new Array();
         var textTop, textLeft, textRight, textBottom, textTopSpace, textBottomSpace, textLeftSpace, textRightSpace, crossPoint, textCenter, spikePoint;
 
@@ -430,29 +431,37 @@ jQuery.bt = {version: '0.9.7'};
             $text.css('margin-bottom', opts.spikeLength + 'px');
             $box.css({top: (top - $text.outerHeight(true)) + opts.overlap + opts.constantOverlap[1], left: horiz + opts.constantOverlap[0]});
             // move text left/right if extends out of window
-            textRightSpace = (winRight - opts.windowMargin) - ($text.offset().left + $text.btOuterWidth(true));
-            var xShift = shadowShiftX;
-            if (textRightSpace < 0) {
-              // shift it left
-              $box.css('left', (numb($box.css('left')) + textRightSpace) + 'px');
-              xShift -= textRightSpace;
-            }
-            // we test left space second to ensure that left of box is visible
-            textLeftSpace = ($text.offset().left + numb($text.css('margin-left'))) - (scrollLeft + opts.windowMargin);
-            if (textLeftSpace < 0) {
-              // shift it right
-              $box.css('left', (numb($box.css('left')) - textLeftSpace) + 'px');
-              xShift += textLeftSpace;
+            var xShift = 0;
+            if(opts.windowCheck){
+                textRightSpace = (winRight - opts.windowMargin) - ($text.offset().left + $text.btOuterWidth(true));
+                if (textRightSpace < 0) {
+                  // shift it left
+                  $box.css('left', (numb($box.css('left')) + textRightSpace) + 'px');
+                  xShift -= textRightSpace;
+                }
+                // we test left space second to ensure that left of box is visible
+                textLeftSpace = ($text.offset().left + numb($text.css('margin-left'))) - (scrollLeft + opts.windowMargin);
+                if (textLeftSpace < 0) {
+                  // shift it right
+                  $box.css('left', (numb($box.css('left')) - textLeftSpace) + 'px');
+                  xShift += textLeftSpace;
+                }
             }
             textTop = $text.btPosition().top + numb($text.css('margin-top'));
             textLeft = $text.btPosition().left + numb($text.css('margin-left'));
             textRight = textLeft + $text.btOuterWidth();
             textBottom = textTop + $text.outerHeight();
-            textCenter = {x: textLeft + ($text.btOuterWidth()*opts.centerPointX), y: textTop + ($text.outerHeight()*opts.centerPointY)};
-            // points[points.length] = {x: x, y: y};
-            points[points.length] = spikePoint = {y: textBottom + opts.spikeLength, x: ((textRight-textLeft) * .5) + xShift, type: 'spike'};
+            textCenter = {x: textLeft + interpretPosition(opts.centerPointX,textRight-textLeft,0,0,textLeft), y: textTop + interpretPosition(opts.centerPointY,0,textBottom-textTop,textTop,0)};
+
+            xShift += shadowShiftX + (horizCenter - horiz) + (interpretPosition(opts.targetCenterPointX,width,0,0,0) - 0.5 * width);
+
+            points[points.length] = spikePoint = {x: ((textRight-textLeft) * .5) + xShift, y: textBottom + opts.spikeLength, type: 'spike'};
+
+            var overlap=interpretPosition(opts.spikeOverlapX,textRight-textLeft,0,0,-spikePoint.x);
+
             crossPoint = findIntersectX(spikePoint.x, spikePoint.y, textCenter.x, textCenter.y, textBottom);
             // make sure that the crossPoint is not outside of text box boundaries
+            crossPoint.x += overlap;
             crossPoint.x = crossPoint.x < textLeft + opts.spikeGirth/2 + opts.cornerRadius ? textLeft + opts.spikeGirth/2 + opts.cornerRadius : crossPoint.x;
             crossPoint.x =  crossPoint.x > (textRight - opts.spikeGirth/2) - opts.cornerRadius ? (textRight - opts.spikeGirth/2) - opts.CornerRadius : crossPoint.x;
             points[points.length] = {x: crossPoint.x - (opts.spikeGirth/2), y: textBottom, type: 'join'};
@@ -462,9 +471,7 @@ jQuery.bt = {version: '0.9.7'};
             points[points.length] = {x: textRight, y: textBottom, type: 'corner'}; // right bottom corner
             points[points.length] = {x: crossPoint.x + (opts.spikeGirth/2), y: textBottom, type: 'join'};
             points[points.length] = spikePoint;
-			points[0].x+=opts.spikeOverlapX;
-			points[1].x+=opts.spikeOverlapX;
-			points[6].x+=opts.spikeOverlapX;
+            points[0].x+=overlap;
             break;
 
           // =================== LEFT =======================
@@ -473,28 +480,36 @@ jQuery.bt = {version: '0.9.7'};
             $text.css('margin-right', opts.spikeLength + 'px');
             $box.css({top: (vert + opts.constantOverlap[1]) + 'px', left: ((left - $text.btOuterWidth(true)) + opts.overlap + opts.constantOverlap[0]) + 'px'});
             // move text up/down if extends out of window
-            textBottomSpace = (winBottom - opts.windowMargin) - ($text.offset().top + $text.outerHeight(true));
-            var yShift = shadowShiftY;
-            if (textBottomSpace < 0) {
-              // shift it up
-              $box.css('top', (numb($box.css('top')) + textBottomSpace) + 'px');
-              yShift -= textBottomSpace;
-            }
-            // we ensure top space second to ensure that top of box is visible
-            textTopSpace = ($text.offset().top + numb($text.css('margin-top'))) - (scrollTop + opts.windowMargin);
-            if (textTopSpace < 0) {
-              // shift it down
-              $box.css('top', (numb($box.css('top')) - textTopSpace) + 'px');
-              yShift += textTopSpace;
+            var yShift = 0;
+            if(opts.windowCheck){
+                textBottomSpace = (winBottom - opts.windowMargin) - ($text.offset().top + $text.outerHeight(true));
+                if (textBottomSpace < 0) {
+                  // shift it up
+                  $box.css('top', (numb($box.css('top')) + textBottomSpace) + 'px');
+                  yShift -= textBottomSpace;
+                }
+                // we ensure top space second to ensure that top of box is visible
+                textTopSpace = ($text.offset().top + numb($text.css('margin-top'))) - (scrollTop + opts.windowMargin);
+                if (textTopSpace < 0) {
+                  // shift it down
+                  $box.css('top', (numb($box.css('top')) - textTopSpace) + 'px');
+                  yShift += textTopSpace;
+                }
             }
             textTop = $text.btPosition().top + numb($text.css('margin-top'));
             textLeft = $text.btPosition().left + numb($text.css('margin-left'));
             textRight = textLeft + $text.btOuterWidth();
             textBottom = textTop + $text.outerHeight();
-            textCenter = {x: textLeft + ($text.btOuterWidth()*opts.centerPointX), y: textTop + ($text.outerHeight()*opts.centerPointY)};
+            textCenter = {x: textLeft + interpretPosition(opts.centerPointX,textRight-textLeft,0,0,textLeft), y: textTop + interpretPosition(opts.centerPointY,0,textBottom-textTop,textTop,0)};
+
+            yShift += shadowShiftY + (vertCenter - vert) + (interpretPosition(opts.targetCenterPointY,0,height,0,0) - 0.5 * height);
+
             points[points.length] = spikePoint = {x: textRight + opts.spikeLength, y: ((textBottom-textTop) * .5) + yShift, type: 'spike'};
+            var overlap=interpretPosition(opts.spikeOverlapY,0,textBottom-textTop,-spikePoint.y,0);
+
             crossPoint = findIntersectY(spikePoint.x, spikePoint.y, textCenter.x, textCenter.y, textRight);
             // make sure that the crossPoint is not outside of text box boundaries
+            crossPoint.y += overlap;
             crossPoint.y = crossPoint.y < textTop + opts.spikeGirth/2 + opts.cornerRadius ? textTop + opts.spikeGirth/2 + opts.cornerRadius : crossPoint.y;
             crossPoint.y =  crossPoint.y > (textBottom - opts.spikeGirth/2) - opts.cornerRadius ? (textBottom - opts.spikeGirth/2) - opts.cornerRadius : crossPoint.y;
             points[points.length] = {x: textRight, y: crossPoint.y + opts.spikeGirth/2, type: 'join'};
@@ -504,9 +519,7 @@ jQuery.bt = {version: '0.9.7'};
             points[points.length] = {x: textRight, y: textTop, type: 'corner'};    // right top corner
             points[points.length] = {x: textRight, y: crossPoint.y - opts.spikeGirth/2, type: 'join'};
             points[points.length] = spikePoint;
-			points[0].y+=opts.spikeOverlapY;
-			points[1].y+=opts.spikeOverlapY;
-			points[6].y+=opts.spikeOverlapY;
+            points[0].y+=overlap;
             break;
 
           // =================== BOTTOM =======================
@@ -515,28 +528,37 @@ jQuery.bt = {version: '0.9.7'};
             $text.css('margin-top', opts.spikeLength + 'px');
             $box.css({top: (top + height) - opts.overlap - opts.constantOverlap[1], left: horiz + opts.constantOverlap[0]});
             // move text up/down if extends out of window
-            textRightSpace = (winRight - opts.windowMargin) - ($text.offset().left + $text.btOuterWidth(true));
-            var xShift = shadowShiftX;
-            if (textRightSpace < 0) {
-              // shift it left
-              $box.css('left', (numb($box.css('left')) + textRightSpace) + 'px');
-              xShift -= textRightSpace;
-            }
-            // we ensure left space second to ensure that left of box is visible
-            textLeftSpace = ($text.offset().left + numb($text.css('margin-left')))  - (scrollLeft + opts.windowMargin);
-            if (textLeftSpace < 0) {
-              // shift it right
-              $box.css('left', (numb($box.css('left')) - textLeftSpace) + 'px');
-              xShift += textLeftSpace;
+            var xShift = 0;
+            if(opts.windowCheck){
+                textRightSpace = (winRight - opts.windowMargin) - ($text.offset().left + $text.btOuterWidth(true));
+                if (textRightSpace < 0) {
+                  // shift it left
+                  $box.css('left', (numb($box.css('left')) + textRightSpace) + 'px');
+                  xShift -= textRightSpace;
+                }
+                // we ensure left space second to ensure that left of box is visible
+                textLeftSpace = ($text.offset().left + numb($text.css('margin-left')))  - (scrollLeft + opts.windowMargin);
+                if (textLeftSpace < 0) {
+                  // shift it right
+                  $box.css('left', (numb($box.css('left')) - textLeftSpace) + 'px');
+                  xShift += textLeftSpace;
+                }
             }
             textTop = $text.btPosition().top + numb($text.css('margin-top'));
             textLeft = $text.btPosition().left + numb($text.css('margin-left'));
             textRight = textLeft + $text.btOuterWidth();
             textBottom = textTop + $text.outerHeight();
-            textCenter = {x: textLeft + ($text.btOuterWidth()*opts.centerPointX), y: textTop + ($text.outerHeight()*opts.centerPointY)};
+            textCenter = {x: textLeft + interpretPosition(opts.centerPointX,textRight-textLeft,0,0,textLeft), y: textTop + interpretPosition(opts.centerPointY,0,textBottom-textTop,textTop,0)};
+
+            xShift += shadowShiftX + (horizCenter - horiz) + (interpretPosition(opts.targetCenterPointX,width,0,0,0) - 0.5 * width);
+
             points[points.length] = spikePoint = {x: ((textRight-textLeft) * .5) + xShift, y: shadowShiftY, type: 'spike'};
+
+            var overlap=interpretPosition(opts.spikeOverlapX,textRight-textLeft,0,0,-spikePoint.x);
+
             crossPoint = findIntersectX(spikePoint.x, spikePoint.y, textCenter.x, textCenter.y, textTop);
             // make sure that the crossPoint is not outside of text box boundaries
+            crossPoint.x += overlap;
             crossPoint.x = crossPoint.x < textLeft + opts.spikeGirth/2 + opts.cornerRadius ? textLeft + opts.spikeGirth/2 + opts.cornerRadius : crossPoint.x;
             crossPoint.x =  crossPoint.x > (textRight - opts.spikeGirth/2) - opts.cornerRadius ? (textRight - opts.spikeGirth/2) - opts.cornerRadius : crossPoint.x;
             points[points.length] = {x: crossPoint.x + opts.spikeGirth/2, y: textTop, type: 'join'};
@@ -546,9 +568,7 @@ jQuery.bt = {version: '0.9.7'};
             points[points.length] = {x: textLeft, y: textTop, type: 'corner'};     // left top corner
             points[points.length] = {x: crossPoint.x - (opts.spikeGirth/2), y: textTop, type: 'join'};
             points[points.length] = spikePoint;
-			points[0].x+=opts.spikeOverlapX;
-			points[1].x+=opts.spikeOverlapX;
-			points[6].x+=opts.spikeOverlapX;
+            points[0].x+=overlap;
             break;
 
           // =================== RIGHT =======================
@@ -557,28 +577,36 @@ jQuery.bt = {version: '0.9.7'};
             $text.css('margin-left', (opts.spikeLength + 'px'));
             $box.css({top: (vert + opts.constantOverlap[1]) + 'px', left: ((left + width) - opts.overlap - opts.constantOverlap[0]) + 'px'});
             // move text up/down if extends out of window
-            textBottomSpace = (winBottom - opts.windowMargin) - ($text.offset().top + $text.outerHeight(true));
-            var yShift = shadowShiftY;
-            if (textBottomSpace < 0) {
-              // shift it up
-              $box.css('top', (numb($box.css('top')) + textBottomSpace) + 'px');
-              yShift -= textBottomSpace;
-            }
-            // we ensure top space second to ensure that top of box is visible
-            textTopSpace = ($text.offset().top + numb($text.css('margin-top'))) - (scrollTop + opts.windowMargin);
-            if (textTopSpace < 0) {
-              // shift it down
-              $box.css('top', (numb($box.css('top')) - textTopSpace) + 'px');
-              yShift += textTopSpace;
+            var yShift = 0;
+            if(opts.windowCheck){
+                textBottomSpace = (winBottom - opts.windowMargin) - ($text.offset().top + $text.outerHeight(true));
+                if (textBottomSpace < 0) {
+                  // shift it up
+                  $box.css('top', (numb($box.css('top')) + textBottomSpace) + 'px');
+                  yShift -= textBottomSpace;
+                }
+                // we ensure top space second to ensure that top of box is visible
+                textTopSpace = ($text.offset().top + numb($text.css('margin-top'))) - (scrollTop + opts.windowMargin);
+                if (textTopSpace < 0) {
+                  // shift it down
+                  $box.css('top', (numb($box.css('top')) - textTopSpace) + 'px');
+                  yShift += textTopSpace;
+                }
             }
             textTop = $text.btPosition().top + numb($text.css('margin-top'));
             textLeft = $text.btPosition().left + numb($text.css('margin-left'));
             textRight = textLeft + $text.btOuterWidth();
             textBottom = textTop + $text.outerHeight();
-            textCenter = {x: textLeft + ($text.btOuterWidth()*opts.centerPointX), y: textTop + ($text.outerHeight()*opts.centerPointY)};
+            textCenter = {x: textLeft + interpretPosition(opts.centerPointX,textRight-textLeft,0,0,textLeft), y: textTop + interpretPosition(opts.centerPointY,0,textBottom-textTop,textTop,0)};
+
+            yShift += shadowShiftY + (vertCenter - vert) + (interpretPosition(opts.targetCenterPointY,0,height,0,0) - 0.5 * height);
+
             points[points.length] = spikePoint = {x: shadowShiftX, y: ((textBottom-textTop) * .5) + yShift, type: 'spike'};
+            var overlap=interpretPosition(opts.spikeOverlapY,0,textBottom-textTop,-spikePoint.y,0);
+
             crossPoint = findIntersectY(spikePoint.x, spikePoint.y, textCenter.x, textCenter.y, textLeft);
             // make sure that the crossPoint is not outside of text box boundaries
+            crossPoint.y += overlap;
             crossPoint.y = crossPoint.y < textTop + opts.spikeGirth/2 + opts.cornerRadius ? textTop + opts.spikeGirth/2 + opts.cornerRadius : crossPoint.y;
             crossPoint.y =  crossPoint.y > (textBottom - opts.spikeGirth/2) - opts.cornerRadius ? (textBottom - opts.spikeGirth/2) - opts.cornerRadius : crossPoint.y;
             points[points.length] = {x: textLeft, y: crossPoint.y - opts.spikeGirth/2, type: 'join'};
@@ -588,14 +616,12 @@ jQuery.bt = {version: '0.9.7'};
             points[points.length] = {x: textLeft, y: textBottom, type: 'corner'};  // left bottom corner
             points[points.length] = {x: textLeft, y: crossPoint.y + opts.spikeGirth/2, type: 'join'};
             points[points.length] = spikePoint;
-			points[0].y+=opts.spikeOverlapY;
-			points[1].y+=opts.spikeOverlapY;
-			points[6].y+=opts.spikeOverlapY;
+            points[0].y+=overlap;
             break;
         } // </ switch >
 
         var canvas = document.createElement('canvas');
-        $(canvas).prop('width', (numb($text.btOuterWidth(true)) + opts.strokeWidth*2 + shadowMarginX)).prop('height', (numb($text.outerHeight(true)) + opts.strokeWidth*2 + shadowMarginY)).appendTo($box).css({position: 'absolute', zIndex: opts.boxzIndex});
+        $(canvas).attr('width', (numb($text.btOuterWidth(true)) + opts.strokeWidth*2 + shadowMarginX)).attr('height', (numb($text.outerHeight(true)) + opts.strokeWidth*2 + shadowMarginY)).appendTo($box).css({position: 'absolute', zIndex: opts.boxzIndex});
 
 
         // if excanvas is set up, we need to initialize the new canvas element
@@ -725,18 +751,18 @@ jQuery.bt = {version: '0.9.7'};
         // function receives the box element (the balloon wrapper div) as an argument
         opts.postShow.apply(this, [$box[0]]);
 
-		// Close box if close event is outbox
-		if(opts.trigger[1]=='outbox'){
-			$box.mouseenter(function(){
-				$(target).data('inbox',true);
-			}).mouseleave(function(){
-				$(target).btOff();
-				$(target).data('inbox',false);
-			});
-			$(target).bind('mouseleave',function(){
-				setTimeout(function(){ if(!$(target).data('inbox')) $(target).btOff(); },20);
-			});
-		}
+        // Close box if close event is outbox
+        if(opts.trigger[1]=='outbox'){
+            $box.mouseenter(function(){
+                $(target).data('inbox',true);
+            }).mouseleave(function(){
+                $(target).btOff();
+                $(target).data('inbox',false);
+            });
+            $(target).bind('mouseleave',function(){
+                setTimeout(function(){ if(!$(target).data('inbox')) $(target).btOff(); },20);
+            });
+        }
       }; // </ turnOn() >
 
       this.btOff = function() {
@@ -1003,6 +1029,15 @@ jQuery.bt = {version: '0.9.7'};
 
     }; // </ findIntersectX() >
 
+    function interpretPosition(p,width,height,top,left){
+        if(typeof p !== 'string') return p;
+        return eval(p.replace('top',top)
+            .replace('%','/100*'+(width?width:height))
+            .replace('bottom',top+height)
+            .replace('left',left)
+            .replace('right',left+width));
+    }
+
   }; // </ jQuery.fn.bt() >
 
   /**
@@ -1154,8 +1189,8 @@ jQuery.bt = {version: '0.9.7'};
     spikeOverlapX:    0,                     // move edge of the spike
     spikeOverlapY:    0,
     overlap:          0,                     // spike overlap (px) onto target (can cause problems with 'hover' trigger)
-	constantOverlap : [0,0],
-	overlay:          false,                 // display overlay on target (use CSS to style) -- BUGGY!
+    constantOverlap : [0,0],
+    overlay:          false,                 // display overlay on target (use CSS to style) -- BUGGY!
     killTitle:        true,                  // kill title tags to avoid double tooltips
 
     textzIndex:       9999,                  // z-index for the text
@@ -1170,7 +1205,7 @@ jQuery.bt = {version: '0.9.7'};
                                              // attempting to place within currently visible area
     fill:             "rgb(255, 255, 102)",  // fill color for the tooltip box, you can use any CSS-style color definition method
                                              // http://www.w3.org/TR/css3-color/#numerical - not all methods have been tested
-
+    windowCheck:   true,     // adapt position to window size
     windowMargin:     10,                    // space (px) to leave between text box and browser edge
 
     strokeWidth:      1,                     // width of stroke around box, **set to 0 for no stroke**
@@ -1180,10 +1215,12 @@ jQuery.bt = {version: '0.9.7'};
 
                       // following values are on a scale of 0 to 1 with .5 being centered
 
-    centerPointX:     .5,                    // the spike extends from center of the target edge to centerPoint
-    centerPointY:     .5,                    // defined by percentage horizontal (x) and vertical (y)
-	align: .5,     // Align point of box at align% to point of target at targetAlign%
-	targetAlign : 0.5,
+    centerPointX:     '50%',                    // the spike extends from center of the target edge to centerPoint
+    centerPointY:     '50%',                    // defined by percentage horizontal (x) and vertical (y)
+    targetCenterPointX:     '50%',                    // the spike extends from center of the target edge to centerPoint
+    targetCenterPointY:     '50%',                    // defined by percentage horizontal (x) and vertical (y)
+    align: .5,     // Align point of box at align% to point of target at targetAlign%
+    targetAlign : 0.5,
     shadow:           false,                 // use drop shadow? (only displays in Safari and FF 3.1) - experimental
     shadowOffsetX:    2,                     // shadow offset x (px)
     shadowOffsetY:    2,                     // shadow offset y (px)
@@ -1199,7 +1236,7 @@ jQuery.bt = {version: '0.9.7'};
 
     activeClass:      'bt-active',           // class added to TARGET element when its BeautyTip is active
 
-    contentSelector:  "$(this).prop('title')", // if there is no content argument, use this selector to retrieve the title
+    contentSelector:  "$(this).attr('title')", // if there is no content argument, use this selector to retrieve the title
                                              // a function which returns the content may also be passed here
 
     ajaxPath:         null,                  // if using ajax request for content, this contains url and (opt) selector
@@ -1214,8 +1251,8 @@ jQuery.bt = {version: '0.9.7'};
                                              // the result of which will be used as the ajaxPath
                                              // the second (optional) value is the content selector as above
                                              // examples:
-                                             //    ["$(this).prop('href')", 'div#content']
-                                             //    ["$(this).parents('.wrapper').find('.title').prop('href')"]
+                                             //    ["$(this).attr('href')", 'div#content']
+                                             //    ["$(this).parents('.wrapper').find('.title').attr('href')"]
                                              //    ["$('#some-element').val()"]
 
     ajaxError:        '<strong>ERROR:</strong> <em>%error</em>',
