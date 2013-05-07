@@ -269,19 +269,6 @@ jQuery.bt = {version: '0.9.7'};
         }
         // </ ajax stuff >
 
-       if(!refreshBoxOnly){
-          // Add image load listener to refrech box after each load
-          var imgsl=0;
-          var imgs=$('img',content).add($(content).filter('img')).hide();;
-          imgs.load(function(){
-            $(this).show();
-            target.btOn(true);
-            imgsl++;
-            // Set content to false only when last image is loaded, else target.btOn() reload content instead of refresh box
-            if(imgsl==imgs.length) content=false;
-          });
-        }
-        
         // now we start actually figuring out where to place the tip
 
         // figure out how to compensate for the shadow, if present
@@ -358,8 +345,21 @@ jQuery.bt = {version: '0.9.7'};
         // put the content in it, style it, and append it to the same offset parent as the target
         var $box = $('<div class="bt-wrapper"></div>').append($text).addClass(opts.cssClass).css({position: 'absolute', width: opts.width, zIndex: opts.wrapperzIndex, visibility:'hidden'}).appendTo(offsetParent);
 
+        $text.append(content);
+        if(!refreshBoxOnly){
+          var imgsl=0;
+          var imgs=$text.find('img').hide();
+          imgs.load(function(){
+            $(this).show();
+            target.btOn(true);
+            imgsl++;
+            // Set content to false only when last image is loaded, else target.btOn() reload content instead of r\
+efresh box
+            if(imgsl==imgs.length) content=false;
+          });
+        }
+
         // Add a close button
-        $box.find('div.bt-content:first').append(content);
         if(opts.closeButton){
           jQuery('<div class="bt-close">&nbsp;</div>').click(function(){
             self.btOff();
