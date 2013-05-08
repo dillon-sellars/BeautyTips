@@ -750,13 +750,15 @@ jQuery.bt = {version: '0.9.7'};
           // Close box if close event is outbox
           if(opts.trigger[1]=='outbox'){
             $box.mouseenter(function(){
-              $(target).data('inbox',true);
-            }).mouseleave(function(){
-              $(target).btOff();
-              $(target).data('inbox',false);
+              $(target).trigger('mouseenter.bt');
+            }).mouseleave(function(e){
+              $(target).trigger('mouseleave.bt');
             });
-            $(target).bind('mouseleave',function(){
-              setTimeout(function(){ if(!$(target).data('inbox')) $(target).btOff(); },20);
+            $(target).bind('mouseenter.bt',function(){
+              $(target).data('inbox',true);
+            }).bind('mouseleave.bt',function(){
+              setTimeout(function(){ if(!$(target).data('inbox')) $(target).btOff(); },2);
+              $(target).data('inbox',false);
             });
           }
         }else{
@@ -799,6 +801,8 @@ jQuery.bt = {version: '0.9.7'};
           // remove the 'bt-active' and activeClass classes from target
           $(i).removeClass('bt-active ' + opts.activeClass);
 
+          $(i).unbind('.bt');
+          
           // trigger postHide function
           // no box argument since it has been removed from the DOM
           opts.postHide.apply(i);
@@ -904,6 +908,16 @@ jQuery.bt = {version: '0.9.7'};
         }
         if (/trident\/5.0/.test(userAgent)) {
           return true;
+        }
+        // Regex from jQuery to return browser and version
+        var match = /(chrome)[ \/]([\w.]+)/.exec( userAgent ) ||
+            /(webkit)[ \/]([\w.]+)/.exec( userAgent ) ||
+            /(opera)(?:.*version|)[ \/]([\w.]+)/.exec( userAgent ) ||
+            /(msie) ([\w.]+)/.exec( userAgent ) ||
+            userAgent.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( userAgent ) ||
+            [];
+        if(match.length>=3 && match[1]=="msie" && parseInt(match[2])>=9){
+            return true;
         }
       } catch(err) {
         // if there's an error, just keep going, we'll assume that drop shadows are not supported
