@@ -168,6 +168,9 @@ jQuery.bt = {version: '0.9.7'};
 
         if(!refreshBoxOnly){
           if (typeof $(this).data('bt-box') == 'object') {
+            if(opts.trigger[1]=='outbox'){
+              return;
+            }
             // if there's already a popup, remove it before creating a new one.
             this.btOff();
           }
