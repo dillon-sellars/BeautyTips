@@ -757,7 +757,7 @@ jQuery.bt = {version: '0.9.7'};
             $(target).bind('mouseenter.bt',function(){
               $(target).data('inbox',true);
             }).bind('mouseleave.bt',function(){
-              setTimeout(function(){ if(!$(target).data('inbox')) $(target).btOff(); },2);
+              setTimeout(function(){ if(!$(target).data('inbox')) $(target).btOff(); },20);
               $(target).data('inbox',false);
             });
           }
