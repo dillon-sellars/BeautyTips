@@ -11,7 +11,7 @@ jQuery.bt = {version: '0.9.7'};
 /*
  * @type jQuery
  * @cat Plugins/bt
- * @requires jQuery v1.2+ (not tested on versions prior to 1.2.6)
+ * @requires jQuery v1.6+
  *
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
